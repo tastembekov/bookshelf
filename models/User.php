@@ -2,37 +2,59 @@
 
 namespace app\models;
 
-class User extends \yii\base\Object implements \yii\web\IdentityInterface
-{
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
+use Yii;
+use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+/**
+ * This is the model class for table "{{%users}}".
+ *
+ * @property integer $id
+ * @property string $username
+ * @property string $password_hash
+ * @property string $salt
+ */
+class User extends ActiveRecord implements IdentityInterface
+{
+    /**s
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return '{{%users}}';
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['username', 'password_hash'], 'required'],
+            [['username', 'password_hash', 'salt'], 'string', 'max' => 255],
+            [['username'], 'unique']
+        ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => Yii::t('app', 'ID'),
+            'username' => Yii::t('app', 'Username'),
+            'password_hash' => Yii::t('app', 'Password Hash'),
+            'salt' => Yii::t('app', 'Salt'),
+        ];
+    }
 
     /**
      * @inheritdoc
      */
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -40,29 +62,6 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Finds user by username
-     *
-     * @param  string      $username
-     * @return static|null
-     */
-    public static function findByUsername($username)
-    {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
         return null;
     }
 
@@ -79,7 +78,7 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public function getAuthKey()
     {
-        return $this->authKey;
+        return null;
     }
 
     /**
@@ -87,17 +86,47 @@ class User extends \yii\base\Object implements \yii\web\IdentityInterface
      */
     public function validateAuthKey($authKey)
     {
-        return $this->authKey === $authKey;
+        return false;
     }
 
     /**
-     * Validates password
-     *
-     * @param  string  $password password to validate
-     * @return boolean if password provided is valid for current user
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert))
+        {
+            if ($this->isNewRecord)
+            {
+                $this->salt = Yii::$app->security->generateRandomString();
+            }
+            if (!empty($this->password_hash))
+            {
+                $this->password_hash =
+                    Yii::$app->security->generatePasswordHash($this->salt . $this->password_hash);
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Password validation.
+     * @param string $password
+     * @return boolean
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        return Yii::$app->security->validatePassword($this->salt . $password, $this->password_hash);
+    }
+
+    /**
+     * Find model by username
+     * @param string $username
+     * @return User
+     */
+    public static function findByUsername($username)
+    {
+        return self::find()->where(['username' => $username])->one();
     }
 }
