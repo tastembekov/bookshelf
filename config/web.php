@@ -18,6 +18,10 @@ $config = [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
         ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+        ],
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
