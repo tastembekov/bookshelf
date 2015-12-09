@@ -28,3 +28,6 @@ phpunit.phar
 
 # local database configuration
 /config/db.php
+
+# redundant files
+composer.lock
