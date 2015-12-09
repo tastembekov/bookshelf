@@ -49,12 +49,12 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             'id' => Yii::t('app', 'ID'),
-            'author_id' => Yii::t('app', 'Author ID'),
+            'author_id' => Yii::t('app', 'Author'),
             'name' => Yii::t('app', 'Name'),
-            'date_create' => Yii::t('app', 'Date Create'),
+            'date_create' => Yii::t('app', 'Book Date Create'),
             'date_update' => Yii::t('app', 'Date Update'),
-            'image_id' => Yii::t('app', 'Image ID'),
-            'date' => Yii::t('app', 'Date'),
+            'image_id' => Yii::t('app', 'Image preview'),
+            'date' => Yii::t('app', 'Published date'),
             'status' => Yii::t('app', 'Status'),
         ];
     }

@@ -35,8 +35,8 @@ use yii\widgets\ActiveForm;
     <div class="row">
         <div class="col-md-6">
             <div class="row">
-                <div class="col-md-3">
-                    <?php echo Yii::t('app', 'Book published date')?>:
+                <div class="col-md-4">
+                    <?php echo Yii::t('app', 'Published date')?>:
                 </div>
                 <div class="col-md-4">
                     <?= $form->field($model, 'date_start', ['template' => '{input}{error}'])
@@ -49,7 +49,7 @@ use yii\widgets\ActiveForm;
                 <div class="col-md-1">
                     <?php echo Yii::t('app', 'until')?>:
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <?= $form->field($model, 'date_finish', ['template' => '{input}{error}'])
                         ->widget(\yii\jui\DatePicker::classname(),[
                             'language' => Yii::$app->language,
