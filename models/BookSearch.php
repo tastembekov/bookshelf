@@ -21,7 +21,7 @@ class BookSearch extends Book
     {
         return [
             [['id', 'author_id', 'image_id', 'status'], 'integer'],
-            [['name', 'date_create', 'date_update', 'date'], 'safe'],
+            [['name', 'date_create', 'date_update', 'date', 'date_start', 'date_finish'], 'safe'],
         ];
     }
 
@@ -60,14 +60,17 @@ class BookSearch extends Book
         $query->andFilterWhere([
             'id' => $this->id,
             'author_id' => $this->author_id,
-            'date_create' => $this->date_create,
-            'date_update' => $this->date_update,
-            'image_id' => $this->image_id,
             'date' => $this->date,
-            'status' => $this->status,
+            'status' => Book::STATUS_ENABLED
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name]);
+
+        if (!empty($this->date_start))
+            $query->andFilterWhere(['>', 'date', $this->date_start]);
+
+        if (!empty($this->date_finish))
+            $query->andFilterWhere(['<', 'date', $this->date_finish]);
 
         return $dataProvider;
     }

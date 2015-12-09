@@ -42,7 +42,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'date_start', ['template' => '{input}{error}'])
                     ->widget(\yii\jui\DatePicker::classname(),[
                         'language' => Yii::$app->language,
-                        'dateFormat' => 'dd/MM/yyyy',
+                        'dateFormat' => 'php:Y-m-d',
                         'options' => ['class' => 'form-control']
                     ]);?>
                 </div>
@@ -53,7 +53,7 @@ use yii\widgets\ActiveForm;
                     <?= $form->field($model, 'date_finish', ['template' => '{input}{error}'])
                         ->widget(\yii\jui\DatePicker::classname(),[
                             'language' => Yii::$app->language,
-                            'dateFormat' => 'dd/MM/yyyy',
+                            'dateFormat' => 'php:Y-m-d',
                             'options' => ['class' => 'form-control']
                         ]);?>
                 </div>

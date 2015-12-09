@@ -21,6 +21,9 @@ use Yii;
  */
 class Book extends \yii\db\ActiveRecord
 {
+    const STATUS_DELETED = 0;
+    const STATUS_ENABLED = 1;
+
     /**
      * @inheritdoc
      */
@@ -73,5 +76,18 @@ class Book extends \yii\db\ActiveRecord
     public function getImage()
     {
         return $this->hasOne(Image::className(), ['id' => 'image_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeDelete()
+    {
+        if(parent::beforeValidate())
+        {
+            $this->status = self::STATUS_DELETED;
+            $this->save();
+        }
+        return false;
     }
 }

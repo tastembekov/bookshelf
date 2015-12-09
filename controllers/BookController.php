@@ -5,6 +5,8 @@ namespace app\controllers;
 use Yii;
 use app\models\Book;
 use app\models\BookSearch;
+use yii\bootstrap\Html;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -21,6 +23,17 @@ class BookController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['index', 'view', 'update', 'delete'],
+                'rules' => [
+                    [
+                        'actions' => ['index', 'view', 'update', 'delete'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
                 ],
             ],
         ];
@@ -48,27 +61,20 @@ class BookController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->renderAjax('view', [
             'model' => $this->findModel($id),
         ]);
     }
 
     /**
-     * Creates a new Book model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * Displays a single Book model.
+     * @param integer $id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionImage($id)
     {
-        $model = new Book();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
+        $model = $this->findModel($id);
+        return Html::img($model->image->real_path);
     }
 
     /**
@@ -80,10 +86,10 @@ class BookController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->goBack();
         } else {
+            Yii::$app->getUser()->setReturnUrl(Yii::$app->request->referrer);
             return $this->render('update', [
                 'model' => $model,
             ]);

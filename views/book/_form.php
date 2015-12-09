@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Author;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -12,22 +14,35 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'author_id')->textInput() ?>
+    <div class="row">
+        <div class="col-md-3">
+            <?php echo Html::img($model->image->real_path, ['width' => '100%', 'height' => 'auto', 'class' => 'form-group'])?>
+        </div>
+        <div class="col-md-9">
+            <?= $form->field($model, 'author_id')->dropDownList(
+                    ArrayHelper::map(Author::find()->all(), 'id', 'fullname'),
+                    ['prompt' => Yii::t('app', 'Choose author')]
+                ); ?>
+            <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+            <?= $form->field($model, 'date')
+                ->widget(\yii\jui\DatePicker::classname(),[
+                    'language' => Yii::$app->language,
+                    'dateFormat' => 'php:Y-m-d',
+                    'options' => ['class' => 'form-control']
+                ]);?>
+            <?= $form->field($model, 'date_create')
+                ->widget(\yii\jui\DatePicker::classname(),[
+                    'language' => Yii::$app->language,
+                    'dateFormat' => 'php:Y-m-d',
+                    'options' => ['class' => 'form-control']
+                ]);?>
+        </div>
+    </div>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'date_create')->textInput() ?>
-
-    <?= $form->field($model, 'date_update')->textInput() ?>
-
-    <?= $form->field($model, 'image_id')->textInput() ?>
-
-    <?= $form->field($model, 'date')->textInput() ?>
-
-    <?= $form->field($model, 'status')->textInput() ?>
-
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+    <div class="row">
+        <div class="col-md-6">
+            <?= Html::submitButton(Yii::t('yii', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        </div>
     </div>
 
     <?php ActiveForm::end(); ?>
