@@ -48,8 +48,8 @@ If you do not have [Composer](http://getcomposer.org/), you may install it by fo
 at [getcomposer.org](http://getcomposer.org/doc/00-intro.md#installation-nix).
 
 ~~~
-php composer.phar global require "fxp/composer-asset-plugin:~1.0.0"
-php composer update
+composer global require "fxp/composer-asset-plugin:~1.0.0"
+composer update
 ~~~
 
 
